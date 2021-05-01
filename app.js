@@ -26,30 +26,31 @@ app.post("/", function (req, res) {
 
   https.get(url, function (response) {
     console.log(response.statusCode);
+    if (response.statusCode === 200) {
+      response.on("data", function (data) {
+        // const weatherData = JSON.parse(data)
+        // console.log(weatherData)
 
-    response.on("data", function (data) {
-      // const weatherData = JSON.parse(data)
-      // console.log(weatherData)
+        const weatherData = JSON.parse(data);
+        const temp = weatherData.main.temp;
+        const weatherDescription = weatherData.weather[0].description;
+        const icon = weatherData.weather[0].icon;
+        const imageURL = "http://openweathermap.org/img/wn/" + icon + "@2x.png";
 
-      const weatherData = JSON.parse(data);
-      const temp = weatherData.main.temp;
-      const weatherDescription = weatherData.weather[0].description;
-      const icon = weatherData.weather[0].icon;
-      const imageURL = "http://openweathermap.org/img/wn/" + icon + "@2x.png";
-
-      res.write(
-        "<p>The weather in " + query + " is " + weatherDescription + ".<p>"
-      );
-      res.write(
-        "<h1>The temparature in " +
-          query +
-          " is " +
-          temp +
-          " degree Celcious. </h1>"
-      );
-      res.write("<img src=" + imageURL + ">");
-      res.send();
-    });
+        res.write(
+          "<p>The weather in " + query + " is " + weatherDescription + ".<p>"
+        );
+        res.write(
+          "<h1>The temparature in " +
+            query +
+            " is " +
+            temp +
+            " degree Celcious. </h1>"
+        );
+        res.write("<img src=" + imageURL + ">");
+        res.send();
+      });
+    } else res.redirect("/");
   });
 
   //Response.send("<h1>Server is up and running</h1>")
